@@ -1,39 +1,49 @@
 # Go [![Docs](https://img.shields.io/badge/-Docs-0a0a0a.svg?style=flat&colorA=0a0a0a)](https://pkg.go.dev/github.com/nikitavoloboev/go?tab=doc)
 
-> Small Go packages & CLIs
+> Go libraries + testing code
 
-## Install
+## File structure
 
-There is [cmd](cmd) dir that contains Go CLIs. The rest are libraries.
+- [cli](cli) - CLIs in go
 
-Can install commands/libraries using:
+## Setup
 
-`go get -u github.com/nikitavoloboev/go/<path-to-lib-or-cmd>`
+Everything is driven using [bun](https://bun.sh/) commands.
 
-For example: `go get -u github.com/nikitavoloboev/go/cmd/savelink` will install [this tool](cmd/savelink/main.go) to save links.
+Assumes [go](https://go.dev/doc/install) is installed.
 
 ## Run
 
-The repo consists of go libraries and CLIs written in Go. Assuming all dependencies are installed (opening repo with [Go extension](https://github.com/golang/vscode-go) & [VSCode](https://code.visualstudio.com/download) should do it automatically).
+```
+bun run dev
+```
 
-Running `go run .` in folder with `main.go` will build & run the library/tool.
+Runs: `go run .`
 
-## Tips
+## Install CLI
 
-[watchexec](https://github.com/watchexec/watchexec) is a nice tool for developing. Can make this alias:
+There is [cli](cli) dir that contains Go CLIs.
 
-`alias wg=watchexec --exts go "echo -- && go run ."`
+`go get -u github.com/nikitavoloboev/go/<path-to-cmd>`
 
-When `wg` is then run, it will run `go run .` automatically whenever go file changes.
+For example: `go get -u github.com/nikitavoloboev/go/cli/savelink` will install [this CLI](cli/savelink/main.go) to save links.
 
-## Discuss / help
+## Install package
 
-Search for [existing issues](../../issues) or open [new one](../../issues/new/choose).
+> TODO:
 
-## Thank you
+## Contribute
 
-You can support me on [GitHub](https://github.com/sponsors/nikitavoloboev) or look into [other projects](https://nikiv.dev/projects) I shared.
+The tasks to do are outlined in [existing issues](../../issues) and in [tasks below](#tasks) (sorted by priority).
 
-I also have [personal Discord](https://discord.com/invite/TVafwaD23d) you can join for more indepth discussions.
+If issue/idea you have is not there, [open new issue](../../issues/new/choose) or [start discussion](../../discussions).
+
+Any PR with code/doc improvements is welcome. ✨
+
+Join [Discord](https://discord.com/invite/TVafwaD23d) for more indepth discussions on this repo and [others](https://github.com/nikitavoloboev#src).
+
+### ♥️
+
+[Support on GitHub](https://github.com/sponsors/nikitavoloboev) or look into [other projects](https://nikiv.dev/projects).
 
 [![MIT](http://bit.ly/mitbadge)](https://choosealicense.com/licenses/mit/) [![Twitter](http://bit.ly/nikitatweet)](https://twitter.com/nikitavoloboev)
