@@ -32,6 +32,8 @@ For example: `go get -u github.com/nikitavoloboev/go/cli/savelink` will install 
 
 > TODO:
 
+<!-- `go get -u github.com/nikitavoloboev/go/lib/<path-to-lib>` -->
+
 ## Contribute
 
 The tasks to do are outlined in [existing issues](../../issues) and in [tasks below](#tasks) (sorted by priority).
