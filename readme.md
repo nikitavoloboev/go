@@ -44,6 +44,12 @@ Any PR with code/doc improvements is welcome. ✨
 
 Join [Discord](https://discord.com/invite/TVafwaD23d) for more indepth discussions on this repo and [others](https://github.com/nikitavoloboev#src).
 
+## Tasks
+
+- setup [goreleaser](https://goreleaser.com) and have fast setup to write, share and deploy code
+  - both as libraries, CLIs, http services
+- do some CLIs with [bubble tea](https://github.com/charmbracelet/bubbletea)
+
 ### ♥️
 
 [Support on GitHub](https://github.com/sponsors/nikitavoloboev) or look into [other projects](https://nikiv.dev/projects).

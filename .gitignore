@@ -5,4 +5,4 @@ private
 cli/gitupdate
 cli/safari
 lib/markdown-parser
-api
+api/pulse
