@@ -49,6 +49,8 @@ Join [Discord](https://discord.com/invite/TVafwaD23d) for more indepth discussio
 - setup [goreleaser](https://goreleaser.com) and have fast setup to write, share and deploy code
   - both as libraries, CLIs, http services
 - do some CLIs with [bubble tea](https://github.com/charmbracelet/bubbletea)
+- move `learn.rs` into a folder in `src/learn` and have many files
+  - `slices.rs`, `structs.rs` etc. rather than have it all in one `learn.rs` file
 
 ### ♥️
 
