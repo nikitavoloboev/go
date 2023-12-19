@@ -2,4 +2,4 @@ go 1.21.5
 
 use ./api/pulse
 
-replace github.com/nikitavoloboev/util => ./lib/util
+use ./lib/util
