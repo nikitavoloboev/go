@@ -11,7 +11,6 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-	"github.com/nikitavoloboev/util"
 )
 
 // get all urls from https://news.ycombinator.com/newest
@@ -33,9 +32,6 @@ func getHnNewestUrls(last int) []string {
 }
 
 func main() {
-	something := util.ConvertToString(100)
-	fmt.Println(something)
-
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 	r.Get("/hn-newest/{last}", func(w http.ResponseWriter, r *http.Request) {
@@ -49,5 +45,5 @@ func main() {
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(links)
 	})
-	http.ListenAndServe(":3000", r)
+	http.ListenAndServe(":3001", r)
 }
