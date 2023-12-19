@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
 
@@ -13,12 +14,24 @@ import (
 )
 
 // get all urls from https://news.ycombinator.com/newest
-func getHnNewestUrls(last int) {
-	fmt.Println(last, "last")
+func getHnNewestUrls(last int) []string {
+	c := colly.NewCollector()
+	var links []string
+
+	// find and visit all links
+	c.OnHTML("a[href]", func(e *colly.HTMLElement) {
+		link := e.Attr("href")
+		links = append(links, link)
+	})
+	c.OnRequest(func(r *colly.Request) {
+		fmt.Println("visiting", r.URL)
+	})
+
+	c.Visit("https://news.ycombinator.com/newest")
+	return links
 }
 
 func main() {
-	fmt.Println("wow")
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 	r.Get("/hn-newest/{last}", func(w http.ResponseWriter, r *http.Request) {
@@ -28,21 +41,9 @@ func main() {
 			http.Error(w, "Invalid parameter", http.StatusBadRequest)
 			return
 		}
-		getHnNewestUrls(last)
-		w.Write([]byte("welcome"))
+		links := getHnNewestUrls(last)
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(links)
 	})
 	http.ListenAndServe(":3000", r)
-
-	c := colly.NewCollector()
-
-	// Find and visit all links
-	c.OnHTML("a[href]", func(e *colly.HTMLElement) {
-		e.Request.Visit(e.Attr("href"))
-	})
-
-	c.OnRequest(func(r *colly.Request) {
-		fmt.Println("Visiting", r.URL)
-	})
-
-	c.Visit("http://go-colly.org/")
 }
