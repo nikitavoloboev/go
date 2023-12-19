@@ -14,11 +14,25 @@ Assumes [go](https://go.dev/doc/install) is installed.
 
 ## Run
 
+For now I go inside each of the go projects inside like [api/pulse] (api/pulse). Then run I have these fish functions:
+
 ```
+function g
+    watchexec --no-vcs-ignore --restart --exts go "tput reset && go run ."
+end
+
+function G
+    watchexec --no-vcs-ignore --restart --exts go "tput reset && go test"
+end
+```
+
+`g` runs the code, and `G` runs the tests. Will improve setup with time.
+
+<!-- ```
 bun run dev
 ```
 
-Runs: `go run .`
+Runs: `go run .` -->
 
 ## Install CLI
 

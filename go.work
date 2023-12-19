@@ -1,0 +1,5 @@
+go 1.21.5
+
+use ./api/pulse
+
+use ./lib/util
