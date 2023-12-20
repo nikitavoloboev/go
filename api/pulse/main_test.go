@@ -6,11 +6,13 @@ import (
 )
 
 func TestGetHnNewestUrls(t *testing.T) {
-	last := 10
-	links := getHnNewestUrls(last)
-	fmt.Println(links)
-
-	if len(links) == 0 {
-		t.Errorf("Expected at least one link, got 0")
+	links, err := getHnNewestPostsIds()
+	if err != nil {
+		t.Fatalf("failed to get HN newest posts IDs: %v", err)
 	}
+	fmt.Println(links)
+}
+
+func TestHnPostProcess(t *testing.T) {
+	processHnPost("38701099")
 }

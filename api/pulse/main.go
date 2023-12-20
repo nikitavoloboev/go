@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"strconv"
 
 	"net/http"
@@ -13,8 +14,23 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 )
 
-// get all urls from https://news.ycombinator.com/newest
-func getHnNewestUrls(last int) []string {
+// uses https://github.com/HackerNews/API#new-top-and-best-stories api to get newest stories (https://news.ycombinator.com/newest)
+func getHnNewestPostsIds() ([]int, error) {
+	resp, err := http.Get("https://hacker-news.firebaseio.com/v0/newstories.json?print=pretty")
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	var ids []int
+	err = json.NewDecoder(resp.Body).Decode(&ids)
+	if err != nil {
+		return nil, err
+	}
+	return ids, nil
+}
+
+func processHnPost(id string) {
 	c := colly.NewCollector()
 	var links []string
 
@@ -27,7 +43,30 @@ func getHnNewestUrls(last int) []string {
 		fmt.Println("visiting", r.URL)
 	})
 
-	c.Visit("https://news.ycombinator.com/newest")
+	hnURL := fmt.Sprintf("https://news.ycombinator.com/item?id=%s", id)
+	c.Visit(hnURL)
+	fmt.Println(links)
+}
+
+func processLobstersPost(id string) {
+
+}
+
+// get all urls from https://lobste.rs/newest
+func getLobstersNewestUrls(last int) []string {
+	c := colly.NewCollector()
+	var links []string
+
+	// find and visit all links
+	c.OnHTML("a[href]", func(e *colly.HTMLElement) {
+		link := e.Attr("href")
+		links = append(links, link)
+	})
+	c.OnRequest(func(r *colly.Request) {
+		fmt.Println("visiting", r.URL)
+	})
+
+	c.Visit("https://lobste.rs/newest")
 	return links
 }
 
@@ -41,9 +80,11 @@ func main() {
 			http.Error(w, "Invalid parameter", http.StatusBadRequest)
 			return
 		}
-		links := getHnNewestUrls(last)
+		links := getLobstersNewestUrls(last)
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(links)
 	})
-	http.ListenAndServe(":3001", r)
+	if err := http.ListenAndServe(":3000", r); err != nil {
+		log.Fatal(err)
+	}
 }
