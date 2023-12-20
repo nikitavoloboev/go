@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"testing"
+
+	"github.com/alecthomas/assert/v2"
 )
 
 func TestGetHnNewestUrls(t *testing.T) {
@@ -14,5 +16,12 @@ func TestGetHnNewestUrls(t *testing.T) {
 }
 
 func TestHnPostProcess(t *testing.T) {
-	processHnPost("38701099")
+	expected := []Link{
+		{
+			title: "Ask HN: What Should I Do with Broken Solar Panels?",
+			url:   "item?id=38708816",
+		},
+	}
+	data := processHnPost("38708816")
+	assert.Equal(t, expected, data)
 }

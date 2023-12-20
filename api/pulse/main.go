@@ -30,22 +30,27 @@ func getHnNewestPostsIds() ([]int, error) {
 	return ids, nil
 }
 
-func processHnPost(id string) {
-	c := colly.NewCollector()
-	var links []string
+// Link represents a link
+type Link struct {
+	title string
+	url   string
+}
 
-	// find and visit all links
-	c.OnHTML("a[href]", func(e *colly.HTMLElement) {
-		link := e.Attr("href")
-		links = append(links, link)
-	})
-	c.OnRequest(func(r *colly.Request) {
-		fmt.Println("visiting", r.URL)
+func processHnPost(id string) []Link {
+	c := colly.NewCollector()
+	var posts []Link
+
+	c.OnHTML("span.titleline > a[href]", func(e *colly.HTMLElement) {
+		post := Link{
+			title: e.Text,
+			url:   e.Attr("href"),
+		}
+		posts = append(posts, post)
 	})
 
 	hnURL := fmt.Sprintf("https://news.ycombinator.com/item?id=%s", id)
 	c.Visit(hnURL)
-	fmt.Println(links)
+	return posts
 }
 
 func processLobstersPost(id string) {
