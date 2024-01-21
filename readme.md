@@ -1,6 +1,6 @@
 # Go [![Docs](https://img.shields.io/badge/-Docs-0a0a0a.svg?style=flat&colorA=0a0a0a)](https://pkg.go.dev/github.com/nikitavoloboev/go?tab=doc)
 
-> Go libraries + testing code
+> Go libraries and other code
 
 ## File structure
 
