@@ -14,7 +14,7 @@ Assumes [go](https://go.dev/doc/install) is installed.
 
 ## Run
 
-For now I go inside each of the go projects inside like [api/pulse] (api/pulse). Then run I have these fish functions:
+For now I go inside each of the go projects inside. Then I have these fish functions:
 
 ```
 function g
