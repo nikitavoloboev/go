@@ -31,7 +31,7 @@ end
 `g` runs the code, and `G` runs the tests. Will improve setup with time.
 
 <!-- ```
-bun run dev
+bun dev
 ```
 
 Runs: `go run .` -->
