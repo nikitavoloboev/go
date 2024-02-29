@@ -8,6 +8,8 @@
 
 ## Setup
 
+<!-- TODO: add nix setup -->
+
 <!-- [Bun](https://bun.sh/) is used to run things. -->
 
 Assumes [go](https://go.dev/doc/install) is installed.
