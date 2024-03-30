@@ -1,7 +1,6 @@
 {
   "scripts": {
-    "watch": "bun cmd.ts run",
-    "dev": "bun watch main"
+    "dev": "bun cmd.ts run"
   },
   "dependencies": {
     "bun": "^1.0.36",

@@ -12,11 +12,11 @@ async function main() {
     case "run":
       watcher.on("change", async (event) => {
         if (event.endsWith(".go")) {
-          await $`tput reset && go run ${event}`
+          await $`tput reset && go run try/*.go`
         }
       })
       if (!args[3]) {
-        await $`tput reset && go run try/main.go`
+        await $`tput reset && go run try/*.go`
       }
       break
     case undefined:
