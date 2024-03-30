@@ -2,7 +2,7 @@
 
 > Go libraries and other code
 
-## File structure
+## Files
 
 - [cli](cli) - CLIs in go
 

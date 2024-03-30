@@ -1,0 +1,16 @@
+{
+  "scripts": {
+    "watch": "bun cmd.ts run",
+    "dev": "bun watch main"
+  },
+  "dependencies": {
+    "bun": "^1.0.36",
+    "watcher": "^2.3.0"
+  },
+  "devDependencies": {
+    "bun-types": "^1.0.36"
+  },
+  "prettier": {
+    "semi": false
+  }
+}
