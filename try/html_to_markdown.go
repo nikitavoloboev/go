@@ -1,19 +1,34 @@
 package main
 
 import (
-	"fmt"
+	"io/ioutil"
 	"log"
+	"net/http"
 
 	md "github.com/JohannesKaufmann/html-to-markdown"
 )
 
-func convertToMarkdown() {
-	converter := md.NewConverter("", true, nil)
-	html := `<strong>Important</strong>`
+func convertUrlToMarkdown(url string) string {
+	// Perform an HTTP GET request to the URL
+	resp, err := http.Get(url)
+	if err != nil {
+		log.Fatalf("Error fetching URL: %v", err)
+	}
+	defer resp.Body.Close()
 
+	// Read the response body to get the HTML content
+	htmlBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatalf("Error reading response body: %v", err)
+	}
+	html := string(htmlBytes)
+
+	// Convert the HTML to Markdown
+	converter := md.NewConverter("", true, nil)
 	markdown, err := converter.ConvertString(html)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("md ->", markdown)
+
+	return markdown
 }
