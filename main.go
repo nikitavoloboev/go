@@ -1,7 +1,15 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+
+	"github.com/nikitavoloboev/go/cmd"
+)
 
 func main() {
-	fmt.Println("run")
+	if err := cmd.RootCmd.Execute(); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
 }

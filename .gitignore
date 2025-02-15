@@ -21,3 +21,4 @@ past.*
 past-*
 *.bike
 *.db
+.repo_ignore
