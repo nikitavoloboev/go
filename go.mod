@@ -1,6 +1,6 @@
 module github.com/nikitavoloboev/go
 
-go 1.23.5
+go 1.21
 
 require (
 	github.com/fatih/color v1.18.0
