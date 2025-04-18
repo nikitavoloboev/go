@@ -1,12 +1,4 @@
 github.com/cpuguy83/go-md2man/v2 v2.0.4/go.mod h1:tgQtvFlXSQOSOSIRvRPT7W67SCa46tRHOmNcaadrF8o=
-github.com/daved/clic v0.0.0-20250304052721-9d396ccda17b h1:fhLqEoqjWbmvCmkQL5r5E2S7DMy92zp/AZzkGzXDbBQ=
-github.com/daved/clic v0.0.0-20250304052721-9d396ccda17b/go.mod h1:Hmp8/5ThKfaBR2TVryo0klEP5xWmv853vvRlpUutYpg=
-github.com/daved/flagset v0.0.0-20250304051046-a6e2ef3a8bec h1:Auvmfwjh4+/Mm4kh5G8lNI6lHplIe9vIFTP5ALT8gX4=
-github.com/daved/flagset v0.0.0-20250304051046-a6e2ef3a8bec/go.mod h1:Ke0kAdbVxn5sRTEnmXX0Ne3KBC/MMkyHXvdyxxPsm1k=
-github.com/daved/operandset v0.0.0-20250304051154-76471d13c315 h1:0GlUS8Ql19r8kPSxeDaSiWX1aIchWSgw/Tgt5uI6wmQ=
-github.com/daved/operandset v0.0.0-20250304051154-76471d13c315/go.mod h1:ZKu/577awsE6vWsDOYxSPvyj/EW1oP7gUV5ak1HM89Y=
-github.com/daved/vtypes v0.0.0-20250304043744-7dc0b006e1b0 h1:TppZ+DXn8sH0NI3WaozW3F8Q57gpq6rRyhK8JuXhdJ0=
-github.com/daved/vtypes v0.0.0-20250304043744-7dc0b006e1b0/go.mod h1:kNq4bZCXmhOp47U6+HQeNydHSsDW5RDNT9+gBd0bOho=
 github.com/fatih/color v1.18.0 h1:S8gINlzdQ840/4pfAwic/ZE0djQEH3wM94VfqLTZcOM=
 github.com/fatih/color v1.18.0/go.mod h1:4FelSpRwEGDpQ12mAdzqdOukCy4u8WUtOY6lkT/6HfU=
 github.com/inconshreveable/mousetrap v1.1.0 h1:wN+x4NVGpMsO7ErUn/mUI3vEoE6Jt13X2s0bqwp9tc8=
