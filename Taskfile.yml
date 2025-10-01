@@ -1,0 +1,89 @@
+version: '3'
+
+vars:
+  bin_dir: "{{.HOME}}/bin"
+  bin_name: "flow"
+
+tasks:
+  default:
+    desc: List available tasks.
+    silent: true
+    cmds:
+      - task --list
+
+  setup:
+    desc: Ensure Go is installed and download Flow CLI dependencies.
+    silent: true
+    cmds:
+      - |
+        set -euo pipefail
+        if ! command -v go >/dev/null 2>&1; then
+          echo "Go toolchain 'go' not found in PATH."
+          echo "Install it from https://go.dev/doc/install"
+          exit 1
+        fi
+        go version >/dev/null
+        repo_root="$PWD"
+        pushd cli/flow >/dev/null
+        export GOCACHE="${GOCACHE:-$repo_root/.gocache}"
+        export GOMODCACHE="${GOMODCACHE:-$repo_root/.gomodcache}"
+        mkdir -p "$GOCACHE"
+        mkdir -p "$GOMODCACHE"
+        if ! go mod download >/dev/null; then
+          echo "Warning: unable to download Go modules; try again once network access is available."
+        fi
+        popd >/dev/null
+        echo "✔️ you are setup"
+
+  flow:
+    desc: Run the Flow CLI (passes CLI args through).
+    silent: true
+    cmds:
+      - |
+        set -euo pipefail
+        repo_root="$PWD"
+        tmp_root="${TMPDIR:-/tmp}"
+        tmp_dir="$(mktemp -d "$tmp_root/flow-task-XXXXXX")"
+        trap 'rm -rf "$tmp_dir"' EXIT
+        pushd cli/flow >/dev/null
+        export GOCACHE="${GOCACHE:-$repo_root/.gocache}"
+        export GOMODCACHE="${GOMODCACHE:-$repo_root/.gomodcache}"
+        mkdir -p "$GOCACHE"
+        mkdir -p "$GOMODCACHE"
+        go build -o "$tmp_dir/flow" .
+        popd >/dev/null
+        "$tmp_dir/flow"{{if .CLI_ARGS}} {{.CLI_ARGS}}{{end}}
+
+  dev:
+    desc: Alias for `task flow`.
+    silent: true
+    cmds:
+      - |
+        set -euo pipefail
+        task flow -- {{.CLI_ARGS}}
+
+  run:
+    desc: Alias for `task flow`.
+    silent: true
+    cmds:
+      - |
+        set -euo pipefail
+        task flow -- {{.CLI_ARGS}}
+
+  publish:
+    desc: Build the Flow CLI binary and install it to ~/bin/flow.
+    silent: true
+    cmds:
+      - |
+        set -euo pipefail
+        repo_root="$PWD"
+        mkdir -p "{{.bin_dir}}"
+        pushd cli/flow >/dev/null
+        export GOCACHE="${GOCACHE:-$repo_root/.gocache}"
+        export GOMODCACHE="${GOMODCACHE:-$repo_root/.gomodcache}"
+        mkdir -p "$GOCACHE"
+        mkdir -p "$GOMODCACHE"
+        go build -o "{{.bin_dir}}/{{.bin_name}}" .
+        popd >/dev/null
+        chmod 755 "{{.bin_dir}}/{{.bin_name}}"
+        echo "Installed CLI to {{.bin_dir}}/{{.bin_name}}"
