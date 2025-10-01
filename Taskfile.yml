@@ -70,7 +70,7 @@ tasks:
         set -euo pipefail
         task flow -- {{.CLI_ARGS}}
 
-  publish:
+  deploy:
     desc: Build the Flow CLI binary and install it to ~/bin/flow.
     silent: true
     cmds:
