@@ -2,7 +2,7 @@ version: '3'
 
 vars:
   bin_dir: "{{.HOME}}/bin"
-  bin_name: "flow"
+  bin_name: "flow-go"
 
 tasks:
   default:
@@ -71,7 +71,7 @@ tasks:
         task flow -- {{.CLI_ARGS}}
 
   deploy:
-    desc: Build the Flow CLI binary and install it to ~/bin/flow.
+    desc: Build the Flow CLI binary and install it to ~/bin/flow-go.
     silent: true
     cmds:
       - |
