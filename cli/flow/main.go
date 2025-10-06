@@ -26,6 +26,8 @@ const (
 	flowVersion        = "1.0.0"
 	upgradeScriptPath  = "/Users/nikiv/src/config/sh/upgrade-go-version.sh"
 	taskfilePath       = "Taskfile.yml"
+	commandName        = "fgo"
+	commandSummary     = "fgo is CLI to do things fast"
 	flowInstallDir     = "~/bin"
 	commitModelName    = "gpt-5-nano"
 	maxCommitDiffRunes = 12000
@@ -42,7 +44,7 @@ type commandInfo struct {
 var commandCatalog []commandInfo
 
 func main() {
-	app := snap.New("flow", "flow is CLI to do things fast").
+	app := snap.New(commandName, commandSummary).
 		Version(flowVersion).
 		DisableHelp()
 
@@ -61,7 +63,7 @@ func main() {
 		return nil
 	})
 
-	registerCommand(app, "install-flow", "Install the Flow CLI into ~/bin and optionally add it to your PATH", func(ctx *snap.Context) error {
+	registerCommand(app, "install-flow", "Install fgo into ~/bin and optionally add it to your PATH", func(ctx *snap.Context) error {
 		return runInstallFlow(ctx)
 	})
 
@@ -97,14 +99,14 @@ func main() {
 		return runYoutubeToSound(ctx)
 	})
 
-	registerCommand(app, "version", "Reports the current version of flow", func(ctx *snap.Context) error {
+	registerCommand(app, "version", "Reports the current version of fgo", func(ctx *snap.Context) error {
 		fmt.Fprintln(ctx.Stdout(), flowVersion)
 		return nil
 	})
 
 	if len(os.Args) == 1 {
 		if newArgs, exitCode, err := selectCommandArgs(); err != nil {
-			fmt.Fprintf(os.Stderr, "flow: %v\n", err)
+			fmt.Fprintf(os.Stderr, "%s: %v\n", commandName, err)
 		} else if exitCode == -1 {
 			// Fall through to help output
 		} else if len(newArgs) == 0 {
@@ -144,10 +146,10 @@ func selectCommandArgs() ([]string, int, error) {
 		"--height=40%",
 		"--layout=reverse-list",
 		"--border=rounded",
-		"--prompt", "flow> ",
+		"--prompt", commandName + "> ",
 		"--info=inline",
 		"--no-multi",
-		"--header", "Select a flow command (Enter to run, ESC to cancel)",
+		"--header", "Select an " + commandName + " command (Enter to run, ESC to cancel)",
 	})
 	if err != nil {
 		return nil, fzf.ExitError, fmt.Errorf("initialize command palette: %w", err)
@@ -239,49 +241,49 @@ func printCommandHelp(name string, out io.Writer) bool {
 		fmt.Fprintln(out, "Upgrade Go using the workspace script")
 		fmt.Fprintln(out)
 		fmt.Fprintln(out, "Usage:")
-		fmt.Fprintln(out, "  flow updateGoVersion")
+		fmt.Fprintf(out, "  %s updateGoVersion\n", commandName)
 		return true
 	case "install-flow":
-		fmt.Fprintf(out, "Install the Flow CLI into %s and prompt to add it to PATH using task install-flow\n", flowInstallDir)
+		fmt.Fprintf(out, "Install %s into %s and prompt to add it to PATH using task install-flow\n", commandName, flowInstallDir)
 		fmt.Fprintln(out)
 		fmt.Fprintln(out, "Usage:")
-		fmt.Fprintln(out, "  flow install-flow")
+		fmt.Fprintf(out, "  %s install-flow\n", commandName)
 		return true
 	case "commit":
 		fmt.Fprintln(out, "Generate a commit message with GPT-5 nano and create the commit")
 		fmt.Fprintln(out)
 		fmt.Fprintln(out, "Usage:")
-		fmt.Fprintln(out, "  flow commit")
+		fmt.Fprintf(out, "  %s commit\n", commandName)
 		return true
 	case "commitPush":
 		fmt.Fprintln(out, "Generate a commit message, commit, and push to the default remote")
 		fmt.Fprintln(out)
 		fmt.Fprintln(out, "Usage:")
-		fmt.Fprintln(out, "  flow commitPush")
+		fmt.Fprintf(out, "  %s commitPush\n", commandName)
 		return true
 	case "commitReviewAndPush":
 		fmt.Fprintln(out, "Generate a commit message, review it interactively, commit, and push")
 		fmt.Fprintln(out)
 		fmt.Fprintln(out, "Usage:")
-		fmt.Fprintln(out, "  flow commitReviewAndPush")
+		fmt.Fprintf(out, "  %s commitReviewAndPush\n", commandName)
 		return true
 	case "branchFromClipboard":
 		fmt.Fprintln(out, "Create a git branch from the clipboard name")
 		fmt.Fprintln(out)
 		fmt.Fprintln(out, "Usage:")
-		fmt.Fprintln(out, "  flow branchFromClipboard")
+		fmt.Fprintf(out, "  %s branchFromClipboard\n", commandName)
 		return true
 	case "clone":
 		fmt.Fprintln(out, "Clone a GitHub repository into ~/gh/<owner>/<repo>")
 		fmt.Fprintln(out)
 		fmt.Fprintln(out, "Usage:")
-		fmt.Fprintln(out, "  flow clone <github-url>")
+		fmt.Fprintf(out, "  %s clone <github-url>\n", commandName)
 		return true
 	case "cloneAndOpen":
 		fmt.Fprintln(out, "Clone a GitHub repository and open it in Cursor")
 		fmt.Fprintln(out)
 		fmt.Fprintln(out, "Usage:")
-		fmt.Fprintln(out, "  flow cloneAndOpen [github-url]")
+		fmt.Fprintf(out, "  %s cloneAndOpen [github-url]\n", commandName)
 		fmt.Fprintln(out)
 		fmt.Fprintln(out, "Without an argument the command uses the frontmost Safari tab URL.")
 		return true
@@ -289,22 +291,22 @@ func printCommandHelp(name string, out io.Writer) bool {
 		fmt.Fprintln(out, "Check out a branch from the remote, creating a local tracking branch if needed")
 		fmt.Fprintln(out)
 		fmt.Fprintln(out, "Usage:")
-		fmt.Fprintln(out, "  flow gitCheckout <branch>")
+		fmt.Fprintf(out, "  %s gitCheckout <branch>\n", commandName)
 		return true
 	case "youtubeToSound":
 		fmt.Fprintln(out, "Download audio from a YouTube URL into ~/.flow/youtube-sound using yt-dlp")
 		fmt.Fprintln(out)
 		fmt.Fprintln(out, "Usage:")
-		fmt.Fprintln(out, "  flow youtubeToSound [youtube-url] [yt-dlp-args...]")
+		fmt.Fprintf(out, "  %s youtubeToSound [youtube-url] [yt-dlp-args...]\n", commandName)
 		fmt.Fprintln(out)
 		fmt.Fprintln(out, "When no URL is provided, the command uses the frontmost Safari tab.")
 		fmt.Fprintln(out, "Any additional arguments are forwarded directly to yt-dlp.")
 		return true
 	case "version":
-		fmt.Fprintln(out, "Reports the current version of flow")
+		fmt.Fprintln(out, "Reports the current version of fgo")
 		fmt.Fprintln(out)
 		fmt.Fprintln(out, "Usage:")
-		fmt.Fprintln(out, "  flow version")
+		fmt.Fprintf(out, "  %s version\n", commandName)
 		return true
 	}
 
@@ -312,16 +314,16 @@ func printCommandHelp(name string, out io.Writer) bool {
 }
 
 func printRootHelp(out io.Writer) {
-	fmt.Fprintln(out, "flow is CLI to do things fast")
+	fmt.Fprintln(out, commandSummary)
 	fmt.Fprintln(out)
 	fmt.Fprintln(out, "Usage:")
-	fmt.Fprintln(out, "  flow [command]")
+	fmt.Fprintf(out, "  %s [command]\n", commandName)
 	fmt.Fprintln(out)
-	fmt.Fprintln(out, "Run `flow` without arguments to open the interactive command palette.")
+	fmt.Fprintf(out, "Run `%s` without arguments to open the interactive command palette.\n", commandName)
 	fmt.Fprintln(out)
 	fmt.Fprintln(out, "Available Commands:")
 	fmt.Fprintln(out, "  help             Help about any command")
-	fmt.Fprintf(out, "  install-flow     Install the Flow CLI into %s and optionally add it to PATH\n", flowInstallDir)
+	fmt.Fprintf(out, "  install-flow     Install %s into %s and optionally add it to PATH\n", commandName, flowInstallDir)
 	fmt.Fprintln(out, "  commit           Generate a commit message with GPT-5 nano and create the commit")
 	fmt.Fprintln(out, "  commitPush       Generate a commit message, commit, and push to the default remote")
 	fmt.Fprintln(out, "  commitReviewAndPush Generate a commit message, review it interactively, commit, and push")
@@ -331,17 +333,17 @@ func printRootHelp(out io.Writer) {
 	fmt.Fprintln(out, "  gitCheckout      Check out a branch from the remote, creating a local tracking branch if needed")
 	fmt.Fprintln(out, "  updateGoVersion  Upgrade Go using the workspace script")
 	fmt.Fprintln(out, "  youtubeToSound   Download audio from a YouTube URL into ~/.flow/youtube-sound using yt-dlp")
-	fmt.Fprintln(out, "  version          Reports the current version of flow")
+	fmt.Fprintln(out, "  version          Reports the current version of fgo")
 	fmt.Fprintln(out)
 	fmt.Fprintln(out, "Flags:")
-	fmt.Fprintln(out, "  -h, --help   help for flow")
+	fmt.Fprintf(out, "  -h, --help   help for %s\n", commandName)
 	fmt.Fprintln(out)
-	fmt.Fprintln(out, "Use \"flow [command] --help\" for more information about a command.")
+	fmt.Fprintf(out, "Use \"%s [command] --help\" for more information about a command.\n", commandName)
 }
 
 func runBranchFromClipboard(ctx *snap.Context) error {
 	if ctx.NArgs() != 0 {
-		fmt.Fprintln(ctx.Stderr(), "Usage: flow branchFromClipboard")
+		fmt.Fprintf(ctx.Stderr(), "Usage: %s branchFromClipboard\n", commandName)
 		return fmt.Errorf("expected 0 arguments, got %d", ctx.NArgs())
 	}
 
@@ -457,13 +459,13 @@ func containsDigit(s string) bool {
 
 func runClone(ctx *snap.Context) error {
 	if ctx.NArgs() != 1 {
-		fmt.Fprintln(ctx.Stderr(), "Usage: flow clone <github-url>")
+		fmt.Fprintf(ctx.Stderr(), "Usage: %s clone <github-url>\n", commandName)
 		return fmt.Errorf("expected 1 argument, got %d", ctx.NArgs())
 	}
 
 	input := strings.TrimSpace(ctx.Arg(0))
 	if input == "" {
-		fmt.Fprintln(ctx.Stderr(), "Usage: flow clone <github-url>")
+		fmt.Fprintf(ctx.Stderr(), "Usage: %s clone <github-url>\n", commandName)
 		return fmt.Errorf("github url cannot be empty")
 	}
 
@@ -478,7 +480,7 @@ func runClone(ctx *snap.Context) error {
 
 func runCloneAndOpen(ctx *snap.Context) error {
 	if ctx.NArgs() > 1 {
-		fmt.Fprintln(ctx.Stderr(), "Usage: flow cloneAndOpen [github-url]")
+		fmt.Fprintf(ctx.Stderr(), "Usage: %s cloneAndOpen [github-url]\n", commandName)
 		return fmt.Errorf("expected at most 1 argument, got %d", ctx.NArgs())
 	}
 
@@ -486,13 +488,13 @@ func runCloneAndOpen(ctx *snap.Context) error {
 	if ctx.NArgs() == 1 {
 		input = strings.TrimSpace(ctx.Arg(0))
 		if input == "" {
-			fmt.Fprintln(ctx.Stderr(), "Usage: flow cloneAndOpen [github-url]")
+			fmt.Fprintf(ctx.Stderr(), "Usage: %s cloneAndOpen [github-url]\n", commandName)
 			return fmt.Errorf("github url cannot be empty")
 		}
 	} else {
 		safariURL, err := activeSafariURL()
 		if err != nil {
-			fmt.Fprintln(ctx.Stderr(), "Usage: flow cloneAndOpen [github-url]")
+			fmt.Fprintf(ctx.Stderr(), "Usage: %s cloneAndOpen [github-url]\n", commandName)
 			return fmt.Errorf("determine Safari URL: %w", err)
 		}
 		input = safariURL
@@ -598,7 +600,7 @@ end tell`
 
 func runInstallFlow(ctx *snap.Context) error {
 	if ctx.NArgs() != 0 {
-		fmt.Fprintln(ctx.Stderr(), "Usage: flow install-flow")
+		fmt.Fprintf(ctx.Stderr(), "Usage: %s install-flow\n", commandName)
 		return fmt.Errorf("expected 0 arguments, got %d", ctx.NArgs())
 	}
 
@@ -643,13 +645,13 @@ func runYoutubeToSound(ctx *snap.Context) error {
 	} else {
 		videoURL, err = safariFrontmostURL()
 		if err != nil {
-			fmt.Fprintln(ctx.Stderr(), "Usage: flow youtubeToSound [youtube-url] [yt-dlp-args...]")
+			fmt.Fprintf(ctx.Stderr(), "Usage: %s youtubeToSound [youtube-url] [yt-dlp-args...]\n", commandName)
 			return reportError(ctx, fmt.Errorf("determine Safari tab URL: %w", err))
 		}
 	}
 
 	if videoURL == "" {
-		fmt.Fprintln(ctx.Stderr(), "Usage: flow youtubeToSound [youtube-url] [yt-dlp-args...]")
+		fmt.Fprintf(ctx.Stderr(), "Usage: %s youtubeToSound [youtube-url] [yt-dlp-args...]\n", commandName)
 		return reportError(ctx, fmt.Errorf("youtube url cannot be empty"))
 	}
 
@@ -748,7 +750,7 @@ type commitPayload struct {
 
 func runCommit(ctx *snap.Context) error {
 	if ctx.NArgs() != 0 {
-		return reportError(ctx, fmt.Errorf("Usage: flow commit"))
+		return reportError(ctx, fmt.Errorf("Usage: %s commit", commandName))
 	}
 
 	payload, err := prepareCommit(ctx)
@@ -767,7 +769,7 @@ func runCommit(ctx *snap.Context) error {
 
 func runCommitPush(ctx *snap.Context) error {
 	if ctx.NArgs() != 0 {
-		return reportError(ctx, fmt.Errorf("Usage: flow commitPush"))
+		return reportError(ctx, fmt.Errorf("Usage: %s commitPush", commandName))
 	}
 
 	payload, err := prepareCommit(ctx)
@@ -791,7 +793,7 @@ func runCommitPush(ctx *snap.Context) error {
 
 func runCommitReviewAndPush(ctx *snap.Context) error {
 	if ctx.NArgs() != 0 {
-		return reportError(ctx, fmt.Errorf("Usage: flow commitReviewAndPush"))
+		return reportError(ctx, fmt.Errorf("Usage: %s commitReviewAndPush", commandName))
 	}
 
 	payload, err := prepareCommit(ctx)
@@ -953,7 +955,7 @@ func promptCommitConfirmation(ctx *snap.Context, message string) (string, bool, 
 }
 
 func editCommitMessage(ctx *snap.Context, current string) (string, error) {
-	tmpFile, err := os.CreateTemp("", "flow-commit-*.md")
+	tmpFile, err := os.CreateTemp("", commandName+"-commit-*.md")
 	if err != nil {
 		return "", err
 	}
@@ -1061,7 +1063,7 @@ func resolveOpenAIKey(context.Context) (string, error) {
 		return cachedOpenAIKey, nil
 	}
 
-	return "", fmt.Errorf("%s is not set; export it before running flow commit", openAIAPIKeyEnv)
+	return "", fmt.Errorf("%s is not set; export it before running %s commit", openAIAPIKeyEnv, commandName)
 }
 
 func reportError(ctx *snap.Context, err error) error {
@@ -1226,13 +1228,13 @@ func splitOwnerRepo(path string) (string, string, error) {
 
 func runGitCheckout(ctx *snap.Context) error {
 	if ctx.NArgs() != 1 {
-		fmt.Fprintln(ctx.Stderr(), "Usage: flow gitCheckout <branch>")
+		fmt.Fprintf(ctx.Stderr(), "Usage: %s gitCheckout <branch>\n", commandName)
 		return fmt.Errorf("expected 1 argument, got %d", ctx.NArgs())
 	}
 
 	branchInput := strings.TrimSpace(ctx.Arg(0))
 	if branchInput == "" {
-		fmt.Fprintln(ctx.Stderr(), "Usage: flow gitCheckout <branch>")
+		fmt.Fprintf(ctx.Stderr(), "Usage: %s gitCheckout <branch>\n", commandName)
 		return fmt.Errorf("branch name cannot be empty")
 	}
 
@@ -1281,7 +1283,7 @@ func runGitCheckout(ctx *snap.Context) error {
 	}
 
 	if branchName == "" {
-		fmt.Fprintln(ctx.Stderr(), "Usage: flow gitCheckout <branch>")
+		fmt.Fprintf(ctx.Stderr(), "Usage: %s gitCheckout <branch>\n", commandName)
 		return fmt.Errorf("branch name cannot be empty")
 	}
 

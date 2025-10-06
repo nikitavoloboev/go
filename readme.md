@@ -12,7 +12,7 @@ Run `task` to see all possible commands.
 
 [flow](https://github.com/nikitavoloboev/flow) repo explains purpose of flow well. See [cli/flow](cli/flow) for its code/docs.
 
-Run `task install-flow` to install `flow-go` into `~/bin`. If `~/bin` isn’t already on your `PATH`, the task asks before adding the appropriate snippet for your current shell.
+Run `task install-flow` to install `fgo` (shortened `flow-go`) binary into `~/bin`.
 
 ## Contributing
 

@@ -1,7 +1,7 @@
 version: '3'
 
 vars:
-  bin_name: "flow-go"
+  bin_name: "fgo"
 
 tasks:
   default:
@@ -35,23 +35,23 @@ tasks:
         echo "✔️ you are setup"
 
   flow:
-    desc: Run the Flow CLI (passes CLI args through).
+    desc: Run the fgo CLI (passes CLI args through).
     silent: true
     cmds:
       - |
         set -euo pipefail
         repo_root="$PWD"
         tmp_root="${TMPDIR:-/tmp}"
-        tmp_dir="$(mktemp -d "$tmp_root/flow-task-XXXXXX")"
+        tmp_dir="$(mktemp -d "$tmp_root/fgo-task-XXXXXX")"
         trap 'rm -rf "$tmp_dir"' EXIT
         pushd cli/flow >/dev/null
         export GOCACHE="${GOCACHE:-$repo_root/.gocache}"
         export GOMODCACHE="${GOMODCACHE:-$repo_root/.gomodcache}"
         mkdir -p "$GOCACHE"
         mkdir -p "$GOMODCACHE"
-        go build -o "$tmp_dir/flow" .
+        go build -o "$tmp_dir/fgo" .
         popd >/dev/null
-        "$tmp_dir/flow"{{if .CLI_ARGS}} {{.CLI_ARGS}}{{end}}
+        "$tmp_dir/fgo"{{if .CLI_ARGS}} {{.CLI_ARGS}}{{end}}
 
   dev:
     desc: Alias for `task flow`.
@@ -70,7 +70,7 @@ tasks:
         task flow -- {{.CLI_ARGS}}
 
   install-flow:
-    desc: Build the Flow CLI binary, install it to ~/bin, and optionally add ~/bin to PATH for your shell.
+    desc: Build the fgo CLI binary, install it to ~/bin as fgo, and optionally add ~/bin to PATH for your shell.
     silent: true
     cmds:
       - |
@@ -85,7 +85,7 @@ tasks:
         mkdir -p "$GOCACHE"
         mkdir -p "$GOMODCACHE"
         tmp_root="${TMPDIR:-/tmp}"
-        tmp_dir="$(mktemp -d "$tmp_root/flow-install-XXXXXX")"
+        tmp_dir="$(mktemp -d "$tmp_root/fgo-install-XXXXXX")"
         trap 'rm -rf "$tmp_dir"' EXIT
         go build -o "$tmp_dir/{{.bin_name}}" .
         popd >/dev/null
@@ -95,6 +95,20 @@ tasks:
         rm -rf "$tmp_dir"
         echo "Installed CLI to $install_path"
 
+        help_snapshot="$("$install_path" --help 2>&1 || true)"
+        notes=$'Running `fgo` without any arguments opens an embedded fzf palette so you can fuzzy-search commands and read their descriptions before executing them.\n\nFor `fgo commit`, export `OPENAI_API_KEY` in your shell profile (e.g. fish config) so the CLI can talk to OpenAI. This environment variable is the only requirement, so the command works in local shells and CI alike.\n\nFor `fgo youtubeToSound`, the CLI automatically passes `--cookies-from-browser` using Safari cookies. Override this by setting `FLOW_YOUTUBE_COOKIES_BROWSER` (e.g. `firefox`), set it to `none` to skip cookies entirely, or pass your own `--cookies*` flags after the URL—they are forwarded directly to `yt-dlp`.\n\nIf you run `fgo youtubeToSound` without arguments, the command grabs the frontmost Safari tab URL automatically.'
+
+        {
+          echo "# fgo"
+          echo
+          printf '```\nfgo --help\n'
+          printf '%s\n' "$help_snapshot"
+          printf '```\n\n'
+          echo '## Notes'
+          echo
+          printf '%s\n' "$notes"
+        } > "$repo_root/cli/flow/readme.md"
+
         case ":${PATH:-}:" in
           *:"$install_dir":*)
             echo "$install_dir already present in PATH"
@@ -103,14 +117,14 @@ tasks:
         esac
 
         shell_name="$(basename "${SHELL:-}")"
-        marker="# >>> flow-go initialize >>>"
-        end_marker="# <<< flow-go initialize <<<"
+        marker="# >>> fgo initialize >>>"
+        end_marker="# <<< fgo initialize <<<"
         target=""
         snippet=""
 
         case "$shell_name" in
           fish)
-            target="$HOME/.config/fish/conf.d/flow-go.fish"
+            target="$HOME/.config/fish/conf.d/fgo.fish"
             snippet='fish_add_path $HOME/bin'
             ;;
           zsh)
@@ -150,7 +164,7 @@ tasks:
                 printf '%s\n' "$end_marker"
               } >> "$target"
             fi
-            echo "Updated $target. Restart your shell or source the file to use flow-go."
+            echo "Updated $target. Restart your shell or source the file to use fgo."
             ;;
           *)
             echo "Skipped PATH update. Add $install_dir to PATH manually if needed."
