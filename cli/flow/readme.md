@@ -1,4 +1,4 @@
-# fgo
+# `flow-go` (installed as `fgo`)
 
 ```
 fgo --help
