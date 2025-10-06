@@ -25,6 +25,8 @@ past/
 *.log
 private
 .blade
+.npm-cache
 
 .gocache
 .gomodcache
+cli/flow
