@@ -2,19 +2,21 @@
 
 ## Setup
 
-Install [Task](https://taskfile.dev/docs/installation). Then run `task setup` & follow instructions until it says `✔️ you are setup`.
+Install [task](https://taskfile.dev/docs/installation). Then run `task setup` & follow instructions until it says `✔️ you are setup`.
 
-## Run
+## Commands
 
 Run `task` to see all possible commands.
 
-## Flow CLI
+## `flow` CLI
 
-[flow](https://github.com/nikitavoloboev/flow) repo explains purpose of flow well. See [cli/flow](cli/flow) for its code.
+[flow](https://github.com/nikitavoloboev/flow) repo explains purpose of flow well. See [cli/flow](cli/flow) for its code/docs.
+
+Run `task install-flow` to install `flow-go` into `~/bin`. If `~/bin` isn’t already on your `PATH`, the task asks before adding the appropriate snippet for your current shell.
 
 ## Contributing
 
-Any PR to improve is welcome. [codex](https://github.com/openai/codex) & [cursor](https://cursor.com) are nice for dev. Great **working** & **useful** patches are most appreciated (ideally).
+Any PR to improve is welcome. [codex](https://github.com/openai/codex) & [cursor](https://cursor.com) are nice for dev. Great **working** & **useful** patches are most appreciated (ideally). Issues with bugs or ideas are welcome too.
 
 ### 🖤
 

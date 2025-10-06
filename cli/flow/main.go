@@ -26,6 +26,7 @@ const (
 	flowVersion        = "1.0.0"
 	upgradeScriptPath  = "/Users/nikiv/src/config/sh/upgrade-go-version.sh"
 	taskfilePath       = "Taskfile.yml"
+	flowInstallDir     = "~/bin"
 	commitModelName    = "gpt-5-nano"
 	maxCommitDiffRunes = 12000
 	openAIAPIKeyEnv    = "OPENAI_API_KEY"
@@ -60,8 +61,8 @@ func main() {
 		return nil
 	})
 
-	registerCommand(app, "deploy", "Deploy the current project using task publish", func(ctx *snap.Context) error {
-		return runDeploy(ctx)
+	registerCommand(app, "install-flow", "Install the Flow CLI into ~/bin and optionally add it to your PATH", func(ctx *snap.Context) error {
+		return runInstallFlow(ctx)
 	})
 
 	registerCommand(app, "commit", "Generate a commit message with GPT-5 nano and create the commit", func(ctx *snap.Context) error {
@@ -240,11 +241,11 @@ func printCommandHelp(name string, out io.Writer) bool {
 		fmt.Fprintln(out, "Usage:")
 		fmt.Fprintln(out, "  flow updateGoVersion")
 		return true
-	case "deploy":
-		fmt.Fprintln(out, "Deploy the current project using task publish")
+	case "install-flow":
+		fmt.Fprintf(out, "Install the Flow CLI into %s and prompt to add it to PATH using task install-flow\n", flowInstallDir)
 		fmt.Fprintln(out)
 		fmt.Fprintln(out, "Usage:")
-		fmt.Fprintln(out, "  flow deploy [project]")
+		fmt.Fprintln(out, "  flow install-flow")
 		return true
 	case "commit":
 		fmt.Fprintln(out, "Generate a commit message with GPT-5 nano and create the commit")
@@ -320,7 +321,7 @@ func printRootHelp(out io.Writer) {
 	fmt.Fprintln(out)
 	fmt.Fprintln(out, "Available Commands:")
 	fmt.Fprintln(out, "  help             Help about any command")
-	fmt.Fprintln(out, "  deploy           Deploy the current project using task publish")
+	fmt.Fprintf(out, "  install-flow     Install the Flow CLI into %s and optionally add it to PATH\n", flowInstallDir)
 	fmt.Fprintln(out, "  commit           Generate a commit message with GPT-5 nano and create the commit")
 	fmt.Fprintln(out, "  commitPush       Generate a commit message, commit, and push to the default remote")
 	fmt.Fprintln(out, "  commitReviewAndPush Generate a commit message, review it interactively, commit, and push")
@@ -595,15 +596,10 @@ end tell`
 	return url, nil
 }
 
-func runDeploy(ctx *snap.Context) error {
-	if ctx.NArgs() > 1 {
-		fmt.Fprintln(ctx.Stderr(), "Usage: flow deploy [project]")
-		return fmt.Errorf("expected at most 1 argument, got %d", ctx.NArgs())
-	}
-
-	if ctx.NArgs() == 1 && strings.TrimSpace(ctx.Arg(0)) == "" {
-		fmt.Fprintln(ctx.Stderr(), "Usage: flow deploy [project]")
-		return fmt.Errorf("project name cannot be empty")
+func runInstallFlow(ctx *snap.Context) error {
+	if ctx.NArgs() != 0 {
+		fmt.Fprintln(ctx.Stderr(), "Usage: flow install-flow")
+		return fmt.Errorf("expected 0 arguments, got %d", ctx.NArgs())
 	}
 
 	if _, err := os.Stat(taskfilePath); err != nil {
@@ -618,22 +614,21 @@ func runDeploy(ctx *snap.Context) error {
 		return fmt.Errorf("reading %s: %w", taskfilePath, err)
 	}
 
-	if !strings.Contains(string(contents), "publish") {
-		return fmt.Errorf("%s does not define a publish task", taskfilePath)
+	if !strings.Contains(string(contents), "install-flow") {
+		return fmt.Errorf("%s does not define an install-flow task", taskfilePath)
 	}
 
-	cmd := exec.Command("task", "publish")
+	if _, err := exec.LookPath("task"); err != nil {
+		return fmt.Errorf("task command not found in PATH: %w", err)
+	}
+
+	cmd := exec.Command("task", "install-flow")
 	cmd.Stdin = ctx.Stdin()
-	output, err := cmd.CombinedOutput()
-	if err != nil {
-		trimmed := strings.TrimSpace(string(output))
-		if trimmed != "" {
-			fmt.Fprintln(ctx.Stderr(), trimmed)
-		}
-		return fmt.Errorf("task publish failed: %w", err)
+	cmd.Stdout = ctx.Stdout()
+	cmd.Stderr = ctx.Stderr()
+	if err := cmd.Run(); err != nil {
+		return fmt.Errorf("task install-flow failed: %w", err)
 	}
-
-	fmt.Fprintln(ctx.Stdout(), "✔️ in your PATH, ready to use as `f` command")
 	return nil
 }
 

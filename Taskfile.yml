@@ -1,7 +1,6 @@
 version: '3'
 
 vars:
-  bin_dir: "{{.HOME}}/bin"
   bin_name: "flow-go"
 
 tasks:
@@ -70,20 +69,90 @@ tasks:
         set -euo pipefail
         task flow -- {{.CLI_ARGS}}
 
-  deploy:
-    desc: Build the Flow CLI binary and install it to ~/bin/flow-go.
+  install-flow:
+    desc: Build the Flow CLI binary, install it to ~/bin, and optionally add ~/bin to PATH for your shell.
     silent: true
     cmds:
       - |
         set -euo pipefail
         repo_root="$PWD"
-        mkdir -p "{{.bin_dir}}"
+        install_dir="$HOME/bin"
+        mkdir -p "$install_dir"
+
         pushd cli/flow >/dev/null
         export GOCACHE="${GOCACHE:-$repo_root/.gocache}"
         export GOMODCACHE="${GOMODCACHE:-$repo_root/.gomodcache}"
         mkdir -p "$GOCACHE"
         mkdir -p "$GOMODCACHE"
-        go build -o "{{.bin_dir}}/{{.bin_name}}" .
+        tmp_root="${TMPDIR:-/tmp}"
+        tmp_dir="$(mktemp -d "$tmp_root/flow-install-XXXXXX")"
+        trap 'rm -rf "$tmp_dir"' EXIT
+        go build -o "$tmp_dir/{{.bin_name}}" .
         popd >/dev/null
-        chmod 755 "{{.bin_dir}}/{{.bin_name}}"
-        echo "Installed CLI to {{.bin_dir}}/{{.bin_name}}"
+        install_path="$install_dir/{{.bin_name}}"
+        mv "$tmp_dir/{{.bin_name}}" "$install_path"
+        chmod 755 "$install_path"
+        rm -rf "$tmp_dir"
+        echo "Installed CLI to $install_path"
+
+        case ":${PATH:-}:" in
+          *:"$install_dir":*)
+            echo "$install_dir already present in PATH"
+            exit 0
+            ;;
+        esac
+
+        shell_name="$(basename "${SHELL:-}")"
+        marker="# >>> flow-go initialize >>>"
+        end_marker="# <<< flow-go initialize <<<"
+        target=""
+        snippet=""
+
+        case "$shell_name" in
+          fish)
+            target="$HOME/.config/fish/conf.d/flow-go.fish"
+            snippet='fish_add_path $HOME/bin'
+            ;;
+          zsh)
+            target="$HOME/.zshrc"
+            snippet='export PATH="$HOME/bin:$PATH"'
+            ;;
+          bash)
+            target="$HOME/.bashrc"
+            snippet='export PATH="$HOME/bin:$PATH"'
+            ;;
+          *)
+            echo "$install_dir is not on PATH. Add it to your shell configuration manually."
+            exit 0
+            ;;
+        esac
+
+        if [ -n "$target" ] && [ -f "$target" ] && grep -F "$marker" "$target" >/dev/null 2>&1; then
+          echo "$install_dir already configured via $target"
+          exit 0
+        fi
+
+        printf 'Add %s to PATH in %s? [y/N]: ' "$install_dir" "${target:-manual}"
+        read -r reply || reply=""
+        case "$reply" in
+          [yY]*)
+            mkdir -p "$(dirname "$target")"
+            if [ "$shell_name" = "fish" ]; then
+              {
+                echo "$marker"
+                echo "$snippet"
+                echo "$end_marker"
+              } > "$target"
+            else
+              {
+                printf '\n%s\n' "$marker"
+                printf '%s\n' "$snippet"
+                printf '%s\n' "$end_marker"
+              } >> "$target"
+            fi
+            echo "Updated $target. Restart your shell or source the file to use flow-go."
+            ;;
+          *)
+            echo "Skipped PATH update. Add $install_dir to PATH manually if needed."
+            ;;
+        esac

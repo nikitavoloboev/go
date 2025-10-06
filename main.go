@@ -5,13 +5,13 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"path/filepath"
 
 	"github.com/dzonerzy/go-snap/snap"
 )
 
 const (
-	flowVersion       = "1.0.0"
-	upgradeScriptPath = "/Users/nikiv/src/config/sh/upgrade-go-version.sh"
+	flowVersion = "1.0.0"
 )
 
 func main() {
@@ -21,15 +21,20 @@ func main() {
 
 	app.Command("updateGoVersion", "Upgrade Go using the workspace script").
 		Action(func(ctx *snap.Context) error {
-			if _, err := os.Stat(upgradeScriptPath); err != nil {
-				return fmt.Errorf("unable to access %s: %w", upgradeScriptPath, err)
+			scriptPath, err := determineUpgradeScriptPath()
+			if err != nil {
+				return err
 			}
 
-			cmd := exec.Command(upgradeScriptPath)
+			if _, err := os.Stat(scriptPath); err != nil {
+				return fmt.Errorf("unable to access %s: %w", scriptPath, err)
+			}
+
+			cmd := exec.Command(scriptPath)
 			cmd.Stdout = ctx.Stdout()
 			cmd.Stderr = ctx.Stderr()
 			if err := cmd.Run(); err != nil {
-				return fmt.Errorf("running %s: %w", upgradeScriptPath, err)
+				return fmt.Errorf("running %s: %w", scriptPath, err)
 			}
 
 			return nil
@@ -125,6 +130,23 @@ func printRootHelp(out io.Writer) {
 	fmt.Fprintln(out, "  -h, --help   help for flow")
 	fmt.Fprintln(out)
 	fmt.Fprintln(out, "Use \"flow [command] --help\" for more information about a command.")
+}
+
+func determineUpgradeScriptPath() (string, error) {
+	if path := os.Getenv("FLOW_UPGRADE_SCRIPT_PATH"); path != "" {
+		return path, nil
+	}
+
+	if root := os.Getenv("FLOW_CONFIG_ROOT"); root != "" {
+		return filepath.Join(root, "sh", "upgrade-go-version.sh"), nil
+	}
+
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return "", fmt.Errorf("determine home directory: %w", err)
+	}
+
+	return filepath.Join(home, "src", "config", "sh", "upgrade-go-version.sh"), nil
 }
 
 func openCurrentDirectory(out io.Writer) error {

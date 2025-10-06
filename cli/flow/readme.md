@@ -1,16 +1,6 @@
-# flow
-
-> CLI to do things fast
+# flow-go
 
 ## Setup
-
-Currently this assumes it will put binary in `~/bin`. So create folder and add it to `$PATH`.
-
-Then, clone repo, install [Taskfile](https://taskfile.dev). Run:
-
-```
-task publish
-```
 
 This puts `f` command into your path to use. I use this CLI to do various things but you are free to create a similar CLI for your use cases.
 
@@ -27,7 +17,7 @@ Usage:
 
 Available Commands:
   help             Help about any command
-  deploy           Deploy the current project using task publish
+  install-flow     Install the Flow CLI into ~/bin and optionally add it to PATH
   commit           Generate a commit message with GPT-5 nano and create the commit
   commitPush       Generate a commit message, commit, and push to the default remote
   commitReviewAndPush Generate a commit message, review it interactively, commit, and push

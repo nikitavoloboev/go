@@ -4,7 +4,7 @@ complete -c flow -l version -d 'Print version and exit'
 
 complete -c flow -n '__fish_use_subcommand' -f -a help -d 'Help about any command'
 complete -c flow -n '__fish_use_subcommand' -f -a updateGoVersion -d 'Upgrade Go using the workspace script'
-complete -c flow -n '__fish_use_subcommand' -f -a deploy -d 'Deploy the current project using task publish'
+complete -c flow -n '__fish_use_subcommand' -f -a install-flow -d 'Install into ~/bin and optionally add it to PATH'
 complete -c flow -n '__fish_use_subcommand' -f -a commit -d 'Generate a commit message'
 complete -c flow -n '__fish_use_subcommand' -f -a commitPush -d 'Generate a commit message and push'
 complete -c flow -n '__fish_use_subcommand' -f -a commitReviewAndPush -d 'Review commit message interactively then push'
@@ -15,7 +15,7 @@ complete -c flow -n '__fish_use_subcommand' -f -a gitCheckout -d 'Check out a re
 complete -c flow -n '__fish_use_subcommand' -f -a version -d 'Reports the current version of flow'
 
 complete -c flow -n '__fish_seen_subcommand_from help' -f -a updateGoVersion -d 'Upgrade Go using the workspace script'
-complete -c flow -n '__fish_seen_subcommand_from help' -f -a deploy -d 'Deploy the current project using task publish'
+complete -c flow -n '__fish_seen_subcommand_from help' -f -a install-flow -d 'Install into ~/bin and optionally add it to PATH'
 complete -c flow -n '__fish_seen_subcommand_from help' -f -a commit -d 'Generate a commit message'
 complete -c flow -n '__fish_seen_subcommand_from help' -f -a commitPush -d 'Generate a commit message and push'
 complete -c flow -n '__fish_seen_subcommand_from help' -f -a commitReviewAndPush -d 'Review commit message interactively then push'
