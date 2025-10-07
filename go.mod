@@ -1,4 +1,4 @@
-module go
+module lang
 
 go 1.24
 
